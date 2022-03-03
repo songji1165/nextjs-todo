@@ -1,7 +1,7 @@
 {
   "name": "next-todo",
   "version": "1.0.0",
-  "description": "next.js todolist",
+  "description": "nextjs todolist with 클론코딩 Next.js",
   "main": "index.js",
   "scripts": {
     "dev": "PORT=${PORT-3000} next",
