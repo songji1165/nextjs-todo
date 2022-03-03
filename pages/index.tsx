@@ -1,7 +1,7 @@
 // @ts-ignore
 import React from "react";
 import {GetServerSideProps, NextPage} from "next";
-import axios from "axios";
+import axios from "../lib/api";
 
 const index: NextPage = ({todos}:TodoType) => {
     console.log(todos);
@@ -10,7 +10,7 @@ const index: NextPage = ({todos}:TodoType) => {
 
 export const getServerSideProps: GetServerSideProps = async () => {
     try{
-        const res = await axios.get<TodoType[]>('http://localhost:4000/api/todos')
+        const res = await axios.get<TodoType[]>('api/todos')
         console.log(res);
         if(res && res.status === 200 && res.data){
             return {props: {todos: res.data}}

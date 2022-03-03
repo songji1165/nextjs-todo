@@ -4,7 +4,7 @@
   "description": "next.js todolist",
   "main": "index.js",
   "scripts": {
-    "dev": "PORT=4000 next",
+    "dev": "PORT=${PORT-3000} next",
     "build": "next build",
     "start": "next start"
   },
