@@ -1,8 +1,6 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import * as fs from "fs";
 
-type TodoType = { id: number, text: string, color: string, checked: boolean }
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         if (req.method === 'GET') {
