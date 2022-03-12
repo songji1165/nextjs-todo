@@ -1,5 +1,5 @@
 // @ts-ignore
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {GetServerSideProps, NextPage} from "next";
 import axios from "../lib/api";
 
@@ -10,22 +10,99 @@ interface IProps {
 const index: NextPage<IProps> = ({todos}) => {
     console.log(todos);
     console.log("클라이언트 ", process.env.NEXT_PUBLIC_API_URL);
-    return <div>hello</div>
+
+    const [todoList, setTodoList] = useState(todos);
+    const [colorsInfo, setColorsInfo] = useState(getColorsInfo(todoList));
+
+    useEffect(() => {
+        console.log("USEEFFECT", todoList);
+        setColorsInfo(getColorsInfo(todoList));
+        console.log(colorsInfo);
+    }, [todoList])
+
+    function getColorsInfo(todos: any) {
+        console.log('colorsInfo ,', todos);
+        const colors = todos.reduce((acc: any, current: any) => {
+            if (acc.findIndex((color: any) => color === current.color) === -1) {
+                acc.push(current.color)
+            }
+            return acc
+        }, []);
+        const colorsInfo = Object.fromEntries(colors.map(color => [color, 0]));
+        todos.forEach(todo => {
+            const {color} = todo;
+            const isColor = colors.find(item => item === color)
+            isColor && colorsInfo[color]++
+        })
+        return colorsInfo
+    }
+
+
+    function deleteTodo(todoId){
+        setTodoList(todoList.filter((todo, idx)=> todo.id !== todoId))
+    }
+
+    function checkedTodo(todoId){
+        setTodoList(todoList.map((todo, idx) => {
+            const checked = !todo.checked
+            if(todo.id === todoId){
+                return {...todo, checked}
+            }
+            return todo
+        }))
+    }
+
+    return <>
+
+        <div>
+            <p>남은 TODO {todoList.length}개</p>
+            <div>
+                {
+                    Object.keys(colorsInfo).map((color, idx) => (
+                        <span key={`color${idx}`}>{color} {colorsInfo[color]}개</span>
+                    ))
+                }
+            </div>
+        </div>
+        <div>
+            <ul>
+                {
+                    todoList.map((todo, idx)=>{
+                        const {id, checked} = todo;
+                        const successId = `success${id}`;
+                        const successTodoStyle = checked ? {"textDecoration" : "line-through"} : {"textDecoration" : "none"}
+                        return (
+                            <li key={`todo${idx}`}>
+                                <span style={successTodoStyle}>{todo.text}</span>
+                                <div>
+                                    <button onClick={()=>deleteTodo(id)}>삭제</button>
+                                    <label htmlFor={successId}>완료</label>
+                                    <input type="checkbox" id={successId} className="successTodo" checked={checked}
+                                        onChange={()=>checkedTodo(id)}
+                                    />
+                                </div>
+                            </li>
+                        )
+                    })
+                }
+            </ul>
+        </div>
+    </>
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    try{
+    try {
         console.log("서버 ", process.env);
 
         const res = await axios.get<TodoType[]>('api/todos')
         console.log(res);
-        if(res && res.status === 200 && res.data){
+        if (res && res.status === 200 && res.data) {
             return {props: {todos: res.data}}
         }
-    }catch (e){
+    } catch (e) {
         console.log(e);
     }
-    return  {props: {todos: []}}
+    return {props: {todos: []}}
 }
 
 export default index

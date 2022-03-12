@@ -14,10 +14,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     if (!todosData) {
                         return resolve([])
                     }
-                    const todos = JSON.parse(data.toString())
+                    const todos = JSON.parse(data.toString());
+                    console.log(" GET JSON : ", todos);
                     return resolve(todos)
                 })
             })
+            console.log("GET Result", todos);
             res.statusCode = 200
             return res.send(todos)
         }
