@@ -1,7 +1,6 @@
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import todo from "./todo"
 import {createWrapper, HYDRATE} from "next-redux-wrapper";
-import exp from "constants";
 
 // combineReducers : 리듀서를 모듈별로 관리하여 combineReducers를 통해 하나로 모음
 const rootReducer = combineReducers({
