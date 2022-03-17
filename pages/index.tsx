@@ -3,6 +3,7 @@ import {GetServerSideProps, NextPage} from "next";
 import axios from "../lib/api";
 import {RootState, useSelector, wrapper} from "../store";
 import {todoActions} from "../store/todo";
+import {useDispatch} from "react-redux";
 
 interface IProps {
     todos: TodoType[];
@@ -15,14 +16,15 @@ const index = () => {
     // 스토어에 저장된 정보를 props로 전달받는 대신, store 사용
     const todos = useSelector((state) => state.todo.todos);
 
+    const dispatch = useDispatch();
 
-    const [todoList, setTodoList] = useState(todos);
-    const [colorsInfo, setColorsInfo] = useState(getColorsInfo(todoList));
+    // const [todoList, setTodoList] = useState(todos);
+    const [colorsInfo, setColorsInfo] = useState(getColorsInfo(todos));
 
     useEffect(() => {
-        setColorsInfo(getColorsInfo(todoList));
+        setColorsInfo(getColorsInfo(todos));
         console.log(colorsInfo);
-    }, [todoList])
+    }, [todos])
 
     function getColorsInfo(todos: any) {
         const colors = todos.reduce((acc: any, current: any) => {
@@ -41,24 +43,27 @@ const index = () => {
     }
 
 
-    function deleteTodo(todoId) {
-        setTodoList(todoList.filter((todo, idx) => todo.id !== todoId))
+    function deleteTodo(todoId: number) {
+        // setTodoList(todoList.filter((todo, idx) => todo.id !== todoId));
+        const newTodoList = todos.filter((todo, idx) => todo.id !== todoId);
+        dispatch(todoActions.setTodo(newTodoList))
     }
 
-    function checkedTodo(todoId) {
-        setTodoList(todoList.map((todo, idx) => {
+    function checkedTodo(todoId: number) {
+        const newTodoList = todos.map((todo, idx) => {
             const checked = !todo.checked
             if (todo.id === todoId) {
                 return {...todo, checked}
             }
             return todo
-        }))
+        });
+        dispatch(todoActions.setTodo(newTodoList));
     }
 
     return <>
 
         <div>
-            <p>남은 TODO {todoList.length}개</p>
+            <p>남은 TODO {todos.length}개</p>
             <div>
                 {
                     Object.keys(colorsInfo).map((color, idx) => (
@@ -70,7 +75,7 @@ const index = () => {
         <div>
             <ul>
                 {
-                    todoList.map((todo, idx) => {
+                    todos.map((todo, idx) => {
                         const {id, checked} = todo;
                         const successId = `success${id}`;
                         const successTodoStyle = checked ? {"textDecoration": "line-through"} : {"textDecoration": "none"}
