@@ -1,10 +1,11 @@
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import todo from "./todo"
 import {createWrapper, HYDRATE} from "next-redux-wrapper";
+import {configureStore} from "@reduxjs/toolkit";
 
 // combineReducers : 리듀서를 모듈별로 관리하여 combineReducers를 통해 하나로 모음
 const rootReducer = combineReducers({
-    todo,
+    todo: todo.reducer,
 })
 
 const reducer = (state: any, action:any) => {
@@ -13,6 +14,7 @@ const reducer = (state: any, action:any) => {
             ...state,
             ...action.payload
         }
+        if(state.count) nextState.count = state.count;
         return nextState;
     }
 
@@ -22,18 +24,12 @@ const reducer = (state: any, action:any) => {
 // 스토어 타입: rootReducer 로 얻을 수 있음
 export type RootState = ReturnType<typeof rootReducer>;
 
-// 미들웨어 적용을 위한 스토어 enhancer
-const bindMiddleware = (middleware: any) => {
-    // 액션 -> 미들웨어 -> 디스패치
-    if(process.env.NODE_ENV !== "production"){
-        const {composeWithDevTools} = require("redux-devtools-extension");
-        return composeWithDevTools(applyMiddleware(...middleware))
-    }
-}
-
 // 스토어 생성
 const initStore = () => {
-    return createStore(reducer, bindMiddleware([]));
+    return configureStore({
+        reducer,
+        devTools: true
+    })
 };
 
 // App 컴포넌트에서 wrapper로 사용하기 위해, createWrapper를 임포트
