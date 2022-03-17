@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {GetServerSideProps, NextPage} from "next";
 import axios from "../lib/api";
-import {wrapper} from "../store";
+import {RootState, useSelector, wrapper} from "../store";
 import {todoActions} from "../store/todo";
 
 interface IProps {
@@ -9,9 +9,12 @@ interface IProps {
 }
 
 // @ts-ignore
-const index = ({todos}) => {
-    console.log(todos);
+const index = () => {
     console.log("클라이언트 ", process.env.NEXT_PUBLIC_API_URL);
+
+    // 스토어에 저장된 정보를 props로 전달받는 대신, store 사용
+    const todos = useSelector((state) => state.todo.todos);
+
 
     const [todoList, setTodoList] = useState(todos);
     const [colorsInfo, setColorsInfo] = useState(getColorsInfo(todoList));
