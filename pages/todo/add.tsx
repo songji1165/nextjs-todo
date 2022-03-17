@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {ChangeEvent, useState} from "react";
 import {useRouter} from "next/router";
 import axios from "../../lib/api";
 
@@ -8,7 +8,7 @@ export default function Add() {
     const [todoText, setTodoText] = useState("");
     const [todoColor, setTodoColor] = useState("");
 
-    function handelChangeText (e){
+    function handelChangeText (e: ChangeEvent<HTMLInputElement>){
         console.log(e.target.value);
         setTodoText(e.target.value)
     }
@@ -33,7 +33,7 @@ export default function Add() {
                         </label>))}
                 </div>
                 <button onClick={()=>handleClickSave()}>추가하기</button>
-                <input type="text" onChange={handelChangeText.bind(this)}/>
+                <input type="text" onChange={(e)=>handelChangeText(e)}/>
             </div>
         </>
     )

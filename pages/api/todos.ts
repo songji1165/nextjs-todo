@@ -4,7 +4,6 @@ import * as fs from "fs";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         if (req.method === 'GET') {
-
             const todos = await new Promise<TodoType[]>((resolve, reject) => {
                 fs.readFile("data/todos.json", (err, data) => {
                     if (err) {
